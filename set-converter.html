@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>集合转化器</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            color: #ffffff;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 700px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 40px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .title {
+            text-align: center;
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            text-align: center;
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 32px;
+        }
+
+        .mode-selector {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 28px;
+            flex-wrap: wrap;
+        }
+
+        .mode-btn {
+            flex: 1;
+            min-width: 140px;
+            padding: 14px 20px;
+            border: 0;
+            border-radius: 14px;
+            background: rgba(255, 255, 255, 0.05);
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .mode-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .mode-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-color: transparent;
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .input-section {
+            margin-bottom: 28px;
+        }
+
+        .input-label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 12px;
+        }
+
+        .input-wrapper {
+            position: relative;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 14px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .input-wrapper:focus-within {
+            border-color: #667eea;
+            box-shadow: 0 0 20px rgba(102, 126, 234, 0.2);
+        }
+
+        .input-prefix {
+            padding: 16px 20px;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 1rem;
+            white-space: nowrap;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 16px 20px;
+            padding-left: 0;
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 1rem;
+            font-family: 'Inter', monospace;
+            outline: none;
+        }
+
+        .input-field::placeholder {
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        .input-suffix {
+            padding: 16px 20px;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 1rem;
+            white-space: nowrap;
+        }
+
+        .convert-btn {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Inter', sans-serif;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .convert-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(102, 126, 234, 0.5);
+        }
+
+        .convert-btn:active {
+            transform: translateY(0);
+        }
+
+        .output-section {
+            margin-top: 28px;
+            padding: 24px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .output-label {
+            position: absolute;
+            top: -10px;
+            left: 20px;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            padding: 0 12px;
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .output-result {
+            font-size: 1.2rem;
+            font-family: 'Inter', monospace;
+            color: #f093fb;
+            text-align: center;
+            word-break: break-all;
+        }
+
+        .output-placeholder {
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 0.95rem;
+        }
+
+        .input-row {
+            display: flex;
+            align-items: stretch;
+        }
+
+        .input-row .input-field {
+            flex: 1;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .output-result {
+            animation: fadeIn 0.4s ease;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 28px;
+            }
+
+            .title {
+                font-size: 1.6rem;
+            }
+
+            .mode-btn {
+                min-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">集合转化器</h1>
+        <p class="subtitle">将不同形式的集合描述转换为标准描述法</p>
+
+        <div class="mode-selector">
+            <button class="mode-btn active" data-mode="natural">自然语言转集合</button>
+            <button class="mode-btn" data-mode="equation">方程/不等式转集合</button>
+            <button class="mode-btn" data-mode="enumerate">列举法转集合</button>
+        </div>
+
+        <div class="input-section">
+            <div class="input-wrapper">
+                <div class="input-row">
+                    <span class="input-prefix" id="inputPrefix">A是由</span>
+                    <input type="text" class="input-field" id="inputField" placeholder="输入内容，如：全体实数">
+                    <span class="input-suffix" id="inputSuffix">组成的集合</span>
+                </div>
+            </div>
+        </div>
+
+        <button class="convert-btn" id="convertBtn">转换</button>
+
+        <div class="output-section">
+            <span class="output-label">转换结果</span>
+            <div class="output-placeholder" id="outputPlaceholder">请输入内容并点击转换</div>
+            <div class="output-result" id="outputResult" style="display: none;"></div>
+        </div>
+    </div>
+
+    <script>
+        const modeBtns = document.querySelectorAll('.mode-btn');
+        const inputPrefix = document.getElementById('inputPrefix');
+        const inputSuffix = document.getElementById('inputSuffix');
+        const inputField = document.getElementById('inputField');
+        const convertBtn = document.getElementById('convertBtn');
+        const outputPlaceholder = document.getElementById('outputPlaceholder');
+        const outputResult = document.getElementById('outputResult');
+
+        let currentMode = 'natural';
+
+        const modeConfigs = {
+            natural: {
+                prefix: 'A是由',
+                suffix: '组成的集合',
+                placeholder: '输入内容，如：全体实数',
+                convert: (value) => {
+                    const content = value.trim();
+                    if (!content) return null;
+                    return `A={a|a∈${content}}`;
+                }
+            },
+            equation: {
+                prefix: 'A是由满足',
+                suffix: '组成的集合',
+                placeholder: '输入一元方程或一元不等式，注意未知数的名称为a',
+                convert: (value) => {
+                    const content = value.trim();
+                    if (!content) return null;
+                    return `{a|${content}}`;
+                }
+            },
+            enumerate: {
+                prefix: 'A={',
+                suffix: '}',
+                placeholder: '输入元素，如：1,2,3,4,5',
+                convert: (value) => {
+                    const content = value.trim();
+                    if (!content) return null;
+                    return `{a| a∈{${content}}}`;
+                }
+            }
+        };
+
+        modeBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                modeBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentMode = btn.dataset.mode;
+                
+                const config = modeConfigs[currentMode];
+                inputPrefix.textContent = config.prefix;
+                inputSuffix.textContent = config.suffix;
+                inputField.placeholder = config.placeholder;
+                inputField.value = '';
+                outputResult.style.display = 'none';
+                outputPlaceholder.style.display = 'block';
+            });
+        });
+
+        convertBtn.addEventListener('click', () => {
+            const value = inputField.value.trim();
+            if (!value) {
+                outputPlaceholder.style.display = 'block';
+                outputPlaceholder.textContent = '请输入内容';
+                outputResult.style.display = 'none';
+                return;
+            }
+
+            const config = modeConfigs[currentMode];
+            const result = config.convert(value);
+
+            if (result) {
+                outputPlaceholder.style.display = 'none';
+                outputResult.textContent = result;
+                outputResult.style.display = 'block';
+                
+                // 重新触发动画
+                outputResult.style.animation = 'none';
+                outputResult.offsetHeight;
+                outputResult.style.animation = 'fadeIn 0.4s ease';
+            }
+        });
+
+        // 支持回车键转换
+        inputField.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                convertBtn.click();
+            }
+        });
+    </script>
+</body>
+</html>
